@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// @file goto_test.h.cpp
-/// Copyright(c) 2008 Jonathan D. Lettvin, All Rights Reserved
+/// Copyright(c) 2008-2013 Jonathan D. Lettvin, All Rights Reserved
 /// @author Jonathan D. Lettvin
 /// @date 20080505
 /// @brief read numerical text data with optimization and error-handling.
