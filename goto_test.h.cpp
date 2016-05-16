@@ -1,16 +1,17 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// @file goto_test.h.cpp
-/// Copyright(c) 2008-2013 Jonathan D. Lettvin, All Rights Reserved
+/// Copyright(c) 2008-2016 Jonathan D. Lettvin, All Rights Reserved
 /// @author Jonathan D. Lettvin
 /// @date 20080505
 /// @brief read numerical text data with optimization and error-handling.
 ///        Implement mathematically provable perfect implementations of
 ///        high-speed data lexers for all possible text lexemes.
 ///        Test edge-cases with built-in unit tests.
+/// Updated 20160515 to remove new warnings and clarify Alternates.
 /// This code assumes 8-bit bytes.
 ///////////////////////////////////////////////////////////////////////////////
 ///   COMPILATION: (Express built-in unit-tests)
-/// g++ -DLETTVIN_LEXERS_H_CPP_UNIT -o goto_test goto_test.h.cpp
+/// g++ -Wall -DLETTVIN_LEXERS_H_CPP_UNIT -o goto_test goto_test.h.cpp
 ///////////////////////////////////////////////////////////////////////////////
 ///   EXAMPLE USAGE: (fixed specified width lexer)
 ///
@@ -96,7 +97,7 @@ lexers.h.cpp May  8 2008 10:41:59 UNIT TEST: ends Alternate style
 ///////////////////////////////////////////////////////////////////////////////
 #endif
 
-#define Alternate 1	///< Identical logic, different appearance.
+#define Alternate 0	///< Identical logic, different appearance.
 
 #ifndef LETTVIN_LEXERS_H_CPP
 #define LETTVIN_LEXERS_H_CPP
@@ -233,7 +234,11 @@ run:	goto *( DIGITS[ d ] );
 	///********************************************************************
 #if Alternate
 #define DECU64COLUMN(n) \
-c##n: e||(e|=inv[n][*s])||(e|=((t=col[n][*s])>r))||((r-=t),(ull+=t),(++s))
+    c##n: \
+    e|| \
+    (e|=inv[n][(int)*s])|| \
+    (e|=((t=col[n][(int)*s])>r))|| \
+    ((r-=t),(ull+=t),(++s))
 	DECU64COLUMN(19);
 	DECU64COLUMN(18);
 	DECU64COLUMN(17);
@@ -255,26 +260,32 @@ c##n: e||(e|=inv[n][*s])||(e|=((t=col[n][*s])>r))||((r-=t),(ull+=t),(++s))
 	DECU64COLUMN( 1);
 	DECU64COLUMN( 0);
 #else
-c19:	e||(e|=inv[19][*s])||(e|=((t=col[19][*s])>r))||((r-=t),(ull+=t),(++s));
-c18:	e||(e|=inv[18][*s])||(e|=((t=col[18][*s])>r))||((r-=t),(ull+=t),(++s));
-c17:	e||(e|=inv[17][*s])||(e|=((t=col[17][*s])>r))||((r-=t),(ull+=t),(++s));
-c16:	e||(e|=inv[16][*s])||(e|=((t=col[16][*s])>r))||((r-=t),(ull+=t),(++s));
-c15:	e||(e|=inv[15][*s])||(e|=((t=col[15][*s])>r))||((r-=t),(ull+=t),(++s));
-c14:	e||(e|=inv[14][*s])||(e|=((t=col[14][*s])>r))||((r-=t),(ull+=t),(++s));
-c13:	e||(e|=inv[13][*s])||(e|=((t=col[13][*s])>r))||((r-=t),(ull+=t),(++s));
-c12:	e||(e|=inv[12][*s])||(e|=((t=col[12][*s])>r))||((r-=t),(ull+=t),(++s));
-c11:	e||(e|=inv[11][*s])||(e|=((t=col[11][*s])>r))||((r-=t),(ull+=t),(++s));
-c10:	e||(e|=inv[10][*s])||(e|=((t=col[10][*s])>r))||((r-=t),(ull+=t),(++s));
-c09:	e||(e|=inv[ 9][*s])||(e|=((t=col[ 9][*s])>r))||((r-=t),(ull+=t),(++s));
-c08:	e||(e|=inv[ 8][*s])||(e|=((t=col[ 8][*s])>r))||((r-=t),(ull+=t),(++s));
-c07:	e||(e|=inv[ 7][*s])||(e|=((t=col[ 7][*s])>r))||((r-=t),(ull+=t),(++s));
-c06:	e||(e|=inv[ 6][*s])||(e|=((t=col[ 6][*s])>r))||((r-=t),(ull+=t),(++s));
-c05:	e||(e|=inv[ 5][*s])||(e|=((t=col[ 5][*s])>r))||((r-=t),(ull+=t),(++s));
-c04:	e||(e|=inv[ 4][*s])||(e|=((t=col[ 4][*s])>r))||((r-=t),(ull+=t),(++s));
-c03:	e||(e|=inv[ 3][*s])||(e|=((t=col[ 3][*s])>r))||((r-=t),(ull+=t),(++s));
-c02:	e||(e|=inv[ 2][*s])||(e|=((t=col[ 2][*s])>r))||((r-=t),(ull+=t),(++s));
-c01:	e||(e|=inv[ 1][*s])||(e|=((t=col[ 1][*s])>r))||((r-=t),(ull+=t),(++s));
-c00:	e||(e|=inv[ 0][*s])||(e|=((t=col[ 0][*s])>r))||((r-=t),(ull+=t),(++s));
+#define DECU64COLPN(p,n) c##p##n: \
+    e|| \
+    (e|=inv[n][(int)*s])|| \
+    (e|=((t=col[n][(int)*s])>r))|| \
+    ((r-=t),(ull+=t),(++s))
+
+    DECU64COLPN(1,9);
+    DECU64COLPN(1,8);
+    DECU64COLPN(1,7);
+    DECU64COLPN(1,6);
+    DECU64COLPN(1,5);
+    DECU64COLPN(1,4);
+    DECU64COLPN(1,3);
+    DECU64COLPN(1,2);
+    DECU64COLPN(1,1);
+    DECU64COLPN(1,0);
+    DECU64COLPN(0,9);
+    DECU64COLPN(0,8);
+    DECU64COLPN(0,7);
+    DECU64COLPN(0,6);
+    DECU64COLPN(0,5);
+    DECU64COLPN(0,4);
+    DECU64COLPN(0,3);
+    DECU64COLPN(0,2);
+    DECU64COLPN(0,1);
+    DECU64COLPN(0,0);
 #endif
 	e |= ( ull < b );	///< See if value fell below minimum
 	if( !e ) return ull;	///< This return bypasses any further execution
@@ -666,7 +677,7 @@ int main( int argc, char *argv[ ] ) {
       std::string("generic exept: ") + e.what() <<
       std::endl;
   }
-  catch( const Lettvin::s08pr s ) {               ///< catch known errors
+  catch( Lettvin::s08pr s ) {                   ///< catch known errors
     std::cout << whoami << "Error: " << s << std::endl;
   }
   catch( const std::string &s ) {               ///< catch known errors
